@@ -30,9 +30,9 @@ setup(
     author_email='kanishka.linux@gmail.com',
     url='https://github.com/kanishka-linux/hlspy',
     long_description="README.md",
-    packages=['src'],
+    packages=['hlspy'],
     include_package_data=True,
-    entry_points={'console_scripts':['hlspy = src.__init__:main']},
+    entry_points={'console_scripts':['hlspy = hlspy.__init__:main']},
     install_requires=['PyQt5'],
     description="A simple headless browser based on QtWebEngine",
 )
