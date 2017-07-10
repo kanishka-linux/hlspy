@@ -34,5 +34,5 @@ setup(
     include_package_data=True,
     entry_points={'console_scripts':['hlspy = src.__init__:main']},
     install_requires=['PyQt5'],
-    description="Terminal based curl like utility for javascript heavy web-pages based on QtWebEngine",
+    description="A simple headless browser based on QtWebEngine",
 )
