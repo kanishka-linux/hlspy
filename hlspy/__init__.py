@@ -27,14 +27,24 @@ else:
 print(BASEDIR,BASEFILE,os.getcwd())
 sys.path.insert(0,BASEDIR)
 
-print(sys.path,'---path---')    
+#print(sys.path,'---path---')    
 
 from PyQt5 import QtWidgets
 from hls import BrowseUrlT
 
 def main():
 	app = QtWidgets.QApplication(sys.argv)
-	print('---------------679--------Engine--start--')
+	option_arr = [
+		'--set-cookie-file=file.txt','--use-cookie-file=file.txt',
+		'--cookie-end-pt=LAST_COOKIE_ID',
+		'--cookie-domain-name=select cookie from particular domain name',
+		'--user-agent=UA','--tmp-dir=','--output=out.html','--js-file=file.js',
+		'--wait-for-cookie','--print-request (print requested urls)',
+		'--select-request=(print selected request)',
+		'--print-cookies','--default-block (enable default adblock)',
+		'--timeout=IN_SECONDS','--block-request=','--show-window',
+		'--show-window=wxh','--grab-window=image.png','--print-pdf=web.pdf'
+		]
 	home = os.path.join(os.path.expanduser('~'),'.config','hlspy')
 	if not os.path.exists(home):
 		os.makedirs(home)
@@ -91,6 +101,10 @@ def main():
 			print_pdf = 'web.pdf'
 			if '=' in i:
 				print_pdf = i.split('=')[1]
+		elif i.startswith('--help'):
+			for i in option_arr:
+				print(i)
+			sys.exit(0)
 	print(url)
 	print(sys.argv)
 	if t_dir is None:
