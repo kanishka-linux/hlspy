@@ -24,6 +24,8 @@ A simple headless browser based on QtWebEngine. Main objective is to create curl
 		
 		options:
 		
+		--help (display some help options)
+		
 		--set-cookie-file=COOKIE_FILE
 				
 		--use-cookie-file=COOKIE_FILE
@@ -43,6 +45,8 @@ A simple headless browser based on QtWebEngine. Main objective is to create curl
 		--wait-for-cookie (Do not quit till desired cookie_id obtained)
 		
 		--print-request (print resource requested by webpage on terminal)
+		
+		--select-request= (print only request with particular substring on terminal)
 		
 		--print-cookies (print cookies on terminal)
 		
