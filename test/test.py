@@ -17,7 +17,6 @@ class TestBrowser(unittest.TestCase):
 		ret = app.exec_()
 		sys.exit(ret)
 		
-	
 	def test_request_print(self):
 		app = QtWidgets.QApplication(sys.argv)
 		self.assertTrue(BrowseUrlT(self.url,tmp_dir=self.tmp_dir,print_request=True,
@@ -31,7 +30,6 @@ class TestBrowser(unittest.TestCase):
 			domain_name=self.dm,user_agent=self.ua,show_window=True,out_file=self.out_file))
 		ret = app.exec_()
 		sys.exit(ret)	
-	
 		
 if __name__ == '__main__':
 	home = os.path.join(os.path.expanduser('~'),'.config','hlspy')
