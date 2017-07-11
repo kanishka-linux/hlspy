@@ -24,7 +24,7 @@ if getattr(sys,'frozen',False):
 	BASEDIR,BASEFILE = os.path.split(os.path.abspath(sys.executable))
 else:
 	BASEDIR,BASEFILE = os.path.split(os.path.abspath(__file__))
-print(BASEDIR,BASEFILE,os.getcwd())
+#print(BASEDIR,BASEFILE,os.getcwd())
 sys.path.insert(0,BASEDIR)
 
 #print(sys.path,'---path---')    
@@ -105,8 +105,8 @@ def main():
 			for i in option_arr:
 				print(i)
 			sys.exit(0)
-	print(url)
-	print(sys.argv)
+	#print(url)
+	#print(sys.argv)
 	if t_dir is None:
 		t_dir = home
 	if set_cookie is None:
