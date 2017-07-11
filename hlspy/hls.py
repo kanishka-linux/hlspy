@@ -40,7 +40,7 @@ class BrowserPage(QWebEnginePage):
 			domain_name=None,user_agent=None,tmp_dir=None,js_file=None,
 			out_file=None,wait_for_cookie=None,print_request=None,
 			print_cookies=None,timeout=None,block_request=None,default_block=None,
-			select_request=None,tab_web=None,grab_window=None):
+			select_request=None,tab_web=None,grab_window=None,print_pdf=None):
 		super(BrowserPage, self).__init__()
 		self.user_agent = user_agent
 		self.set_cookie = set_cookie
@@ -56,6 +56,7 @@ class BrowserPage(QWebEnginePage):
 		self.js_content = None
 		self.tab_web = tab_web
 		self.grab_window = grab_window
+		self.print_pdf = print_pdf
 		if self.js_file:
 			f = open(self.js_file,encoding='utf-8',mode='r')
 			self.js_content = f.read()
@@ -66,6 +67,7 @@ class BrowserPage(QWebEnginePage):
 		self.loadFinished.connect(self._loadFinished)
 		self.loadProgress.connect(self._loadProgress)
 		self.loadStarted.connect(self._loadstart)
+		self.pdfPrintingFinished.connect(self._pdf_finished)
 		p = NetWorkManager(self,url,print_request,block_request,default_block,select_request)
 		p.netS.connect(lambda y = x : self.urlMedia(y))
 		self.media_received.connect(lambda y = x : self.urlMedia(y))
@@ -119,6 +121,9 @@ class BrowserPage(QWebEnginePage):
 	
 	def javaScriptAlert(self,url,msg):
 		print(msg,'--msg--',url.url())
+	
+	def javaScriptConsoleMessage(self,level,msg,line,source):
+		print(msg)
 		
 	def _set_cookie(self,cookie_file):
 		cookie_arr = QtNetwork.QNetworkCookie()
@@ -202,8 +207,11 @@ class BrowserPage(QWebEnginePage):
 		dm = False
 		if self.domain_name:
 			reqkey = self.cookie_split(i)
-			if self.domain_name in reqkey['domain']:
-				dm = True
+			try:
+				if self.domain_name in reqkey['domain']:
+					dm = True
+			except:
+				pass
 			try:
 				reqkey['expiry']
 			except:
@@ -243,7 +251,12 @@ class BrowserPage(QWebEnginePage):
 		
 	def htm_src(self,x):
 		self.html_file = x
-			
+	
+	def _pdf_finished(self,path,val):
+		print(val,path)
+		if not self.timeout:
+			sys.exit(0)
+	
 	def val_scr(self,x):
 		print('===============java----------scr')
 		val = x
@@ -263,8 +276,8 @@ class BrowserPage(QWebEnginePage):
 		result = ""
 		print('Finished')
 		if self.grab_window:
-			png_path = os.path.join(self.tmp_dir,'image.png')
-			self.tab_web.grab().save(png_path)
+			self.tab_web.grab().save(self.grab_window)
+			
 		if not self.out_file:
 			print(self.html_file)
 		else:
@@ -273,11 +286,17 @@ class BrowserPage(QWebEnginePage):
 			f.close()
 		if self.js_content:
 			self.runJavaScript(self.js_content,self.val_scr)
+			if self.print_pdf:
+				self.printToPdf(self.print_pdf)
 			#print(self.js_content)
 		else:
-			if not self.wait_for_cookie and not self.timeout:
+			if not self.wait_for_cookie and not self.timeout and not self.print_pdf:
 				sys.exit(0)
+			elif self.print_pdf and not self.timeout:
+				self.printToPdf(self.print_pdf)
 			elif self.timeout:
+				if self.print_pdf:
+					self.printToPdf(self.print_pdf)
 				self.timer.start(self.timeout*1000)
 
 class BrowseUrlT(QWebEngineView):
@@ -286,7 +305,8 @@ class BrowseUrlT(QWebEngineView):
 			domain_name=None,user_agent=None,tmp_dir=None,js_file=None,
 			out_file=None,wait_for_cookie=None,print_request=None,
 			print_cookies=None,timeout=None,block_request=None,default_block=None,
-			select_request=None,show_window=None,window_dim=None,grab_window=None):
+			select_request=None,show_window=None,window_dim=None,grab_window=None,
+			print_pdf=None):
 		super(BrowseUrlT, self).__init__()
 		#QtWidgets.__init__()
 		self.url = url
@@ -316,6 +336,7 @@ class BrowseUrlT(QWebEngineView):
 		self.show_window = show_window
 		self.window_dim = window_dim
 		self.grab_window = grab_window
+		self.print_pdf = print_pdf
 		self.Browse(self.url)
 		
 	def Browse(self,url):
@@ -347,7 +368,7 @@ class BrowseUrlT(QWebEngineView):
 					self.domain_name,self.user_agent,self.tmp_dir,self.js_file,
 					self.out_file,self.wait_for_cookie,self.print_request,
 					self.print_cookies,self.timeout,self.block_request,self.default_block,
-					self.select_request,self.tab_web,self.grab_window)
+					self.select_request,self.tab_web,self.grab_window,self.print_pdf)
 		
 		self.web.cookie_signal.connect(self.cookie_found)
 		#self.web.media_signal.connect(self.media_source_found)

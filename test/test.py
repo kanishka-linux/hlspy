@@ -41,7 +41,7 @@ if __name__ == '__main__':
 	parent_basedir,__ = os.path.split(BASEDIR)
 	print(parent_basedir)
 	sys.path.insert(0,parent_basedir)
-	k_dir = os.path.join(parent_basedir,'src')
+	k_dir = os.path.join(parent_basedir,'hlspy')
 	sys.path.insert(0,k_dir)
 	from hls import BrowseUrlT
 	unittest.main()

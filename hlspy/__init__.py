@@ -42,9 +42,10 @@ def main():
 	if url.startswith('--'):
 		url = sys.argv[1]
 	set_cookie = end_point = domain_name = user_agent = t_dir = use_cookie = None
-	out_file = js_file = block_request = select_request = window_dim = None
+	out_file = js_file = block_request = select_request = window_dim = print_pdf = None
 	wait_for_cookie = print_request = print_cookies = default_block = False
-	show_window = grab_window = False
+	show_window = False
+	grab_window = None
 	timeout = 0
 	for  i in sys.argv:
 		if i.startswith('--set-cookie-file='):
@@ -83,7 +84,13 @@ def main():
 		elif i.startswith('--select-request='):
 			select_request = i.split('=')[1]
 		elif i.startswith('--grab-window'):
-			grab_window = True
+			grab_window = 'image.png'
+			if '=' in i:
+				grab_window = i.split('=')[1]
+		elif i.startswith('--print-pdf'):
+			print_pdf = 'web.pdf'
+			if '=' in i:
+				print_pdf = i.split('=')[1]
 	print(url)
 	print(sys.argv)
 	if t_dir is None:
@@ -101,7 +108,13 @@ def main():
 	
 	if out_file:
 		out_file = os.path.join(os.getcwd(),out_file)
-		
+	
+	if print_pdf:
+		print_pdf = os.path.join(os.getcwd(),print_pdf)
+	
+	if grab_window:
+		grab_window = os.path.join(os.getcwd(),grab_window)
+	
 	if domain_name is None:
 		if url.startswith('http'):
 			domain_name = url.split('/')[2]
@@ -121,7 +134,8 @@ def main():
 			wait_for_cookie=wait_for_cookie,print_request=print_request,
 			print_cookies=print_cookies,timeout=timeout,block_request=block_request,
 			default_block=default_block,select_request=select_request,
-			show_window=show_window,window_dim=window_dim,grab_window=grab_window)
+			show_window=show_window,window_dim=window_dim,grab_window=grab_window,
+			print_pdf=print_pdf)
 			
 	ret = app.exec_()
 	sys.exit(ret)
