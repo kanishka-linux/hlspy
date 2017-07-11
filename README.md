@@ -69,9 +69,9 @@ A simple headless browser based on QtWebEngine. Main objective is to create curl
 		
 		Examples:
 		
-		$ hlspy 'https://duckduckgo.com' 
+		$ hlspy 'https://duckduckgo.com' (will print html output to terminal)
 		
-		$ hlspy 'https://duckduckgo.com' --output=out.html
+		$ hlspy 'https://duckduckgo.com' --output=out.html (will write html output to out.html)
 		
 		$ hlspy 'https://duckduckgo.com' --print-request --output=out.html
 		
