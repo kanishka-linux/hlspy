@@ -100,7 +100,7 @@ Some methods to use on web instance:
 		
 2. web.getcookie_string() : get cookies
 		
-3. web.get_window_object() : gets widget of webview. Users need to close the widget manually once desired information has been obtained, otherwise every widget will remain active in the background and will consume memory.
+3. web.get_window_object() : gets widget of webview. Users need to close the widget manually using command **web.get_window_object().close()** once desired information has been obtained, otherwise every widget will remain active in the background and will consume memory.
 
 Sample code is located in **sample** directory. Users can directly execute the program if hlspy is installed properly with PyQt5 5.9+.
 		
