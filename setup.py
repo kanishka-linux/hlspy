@@ -24,7 +24,7 @@ import shutil
 
 setup(
     name='hlspy',
-    version='1.0.0',
+    version='1.1.0',
     license='GPLv3',
     author='kanishka-linux',
     author_email='kanishka.linux@gmail.com',
