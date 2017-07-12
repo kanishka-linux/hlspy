@@ -40,7 +40,8 @@ class BrowserPage(QWebEnginePage):
 			domain_name=None,user_agent=None,tmp_dir=None,js_file=None,
 			out_file=None,wait_for_cookie=None,print_request=None,
 			print_cookies=None,timeout=None,block_request=None,default_block=None,
-			select_request=None,tab_web=None,grab_window=None,print_pdf=None):
+			select_request=None,tab_web=None,grab_window=None,print_pdf=None,
+			quit_now=None,parent=None):
 		super(BrowserPage, self).__init__()
 		self.user_agent = user_agent
 		self.set_cookie = set_cookie
@@ -57,10 +58,13 @@ class BrowserPage(QWebEnginePage):
 		self.tab_web = tab_web
 		self.grab_window = grab_window
 		self.print_pdf = print_pdf
-		if self.js_file:
-			f = open(self.js_file,encoding='utf-8',mode='r')
-			self.js_content = f.read()
-			f.close()
+		if self.js_file is not None:
+			if os.path.isfile(self.js_file):
+				f = open(self.js_file,encoding='utf-8',mode='r')
+				self.js_content = f.read()
+				f.close()
+			else:
+				self.js_content = self.js_file
 		x = ''
 		self.m = self.profile().cookieStore()
 		self.profile().setHttpUserAgent(self.user_agent)
@@ -87,18 +91,19 @@ class BrowserPage(QWebEnginePage):
 		else:
 			self.m.deleteAllCookies()
 			self.m.cookieAdded.connect(lambda  x = t : self._cookie(x))
-			
+		self.parent = parent
 		self.got_cookie = False
 		self.text = ''
 		self.final_url_got = False
 		self.html_file = ''
-		
+		self.cookie_string = ''
+		self.quit_now = quit_now
 		self.timer = QtCore.QTimer()
 		self.timer.timeout.connect(self.quit_browser)
 		self.timer.setSingleShot(True)
 	
 	def quit_browser(self):
-		sys.exit(0)
+		self._decide_quit()
 		
 	@pyqtSlot(str)
 	def urlMedia(self,info):
@@ -224,15 +229,16 @@ class BrowserPage(QWebEnginePage):
 			str1 = ''
 			if reqkey:
 				str1 = reqkey['domain']+'	'+'FALSE'+'	'+reqkey['path']+'	'+'FALSE'+'	'+reqkey['expiry']+'	'+reqkey['name_id']+'	'+reqkey[reqkey['name_id']]
-			cc = os.path.join(self.set_cookie)
-			if not os.path.exists(cc):
-				f = open(cc,'w')
-				f.write(str1)
-			else:
-				f = open(cc,'a')
-				f.write('\n'+str1)
-			
-			f.close()
+				self.cookie_string = self.cookie_string + str1 + '\n'
+			if self.set_cookie is not None:
+				cc = self.set_cookie
+				if not os.path.exists(cc):
+					f = open(cc,'w')
+					f.write(str1)
+				else:
+					f = open(cc,'a')
+					f.write('\n'+str1)
+				f.close()
 			
 	def _getTime(self,i):
 		j = re.findall('expires=[^;]*',i)
@@ -255,7 +261,7 @@ class BrowserPage(QWebEnginePage):
 	def _pdf_finished(self,path,val):
 		print(val,path)
 		if not self.timeout:
-			sys.exit(0)
+			self._decide_quit()
 	
 	def val_scr(self,x):
 		print('===============java----------scr')
@@ -265,6 +271,10 @@ class BrowserPage(QWebEnginePage):
 		if self.timeout:
 			self.timer.start(self.timeout*1000)
 		else:
+			self._decide_quit()
+			
+	def _decide_quit(self):
+		if self.quit_now:
 			sys.exit(0)
 		
 	def _loadProgress(self):
@@ -278,20 +288,21 @@ class BrowserPage(QWebEnginePage):
 		if self.grab_window:
 			self.tab_web.grab().save(self.grab_window)
 			
-		if not self.out_file:
+		if self.out_file is None:
 			print(self.html_file)
+		elif type(self.out_file) is bool:
+			pass
 		else:
 			f = open(self.out_file,'wb')
 			f.write(self.html_file.encode('utf-8'))
 			f.close()
-		if self.js_content:
+		if self.js_content is not None:
 			self.runJavaScript(self.js_content,self.val_scr)
 			if self.print_pdf:
 				self.printToPdf(self.print_pdf)
-			#print(self.js_content)
 		else:
 			if not self.wait_for_cookie and not self.timeout and not self.print_pdf:
-				sys.exit(0)
+				self._decide_quit()
 			elif self.print_pdf and not self.timeout:
 				self.printToPdf(self.print_pdf)
 			elif self.timeout:
@@ -306,7 +317,7 @@ class BrowseUrlT(QWebEngineView):
 			out_file=None,wait_for_cookie=None,print_request=None,
 			print_cookies=None,timeout=None,block_request=None,default_block=None,
 			select_request=None,show_window=None,window_dim=None,grab_window=None,
-			print_pdf=None):
+			print_pdf=None,quit_now=None):
 		super(BrowseUrlT, self).__init__()
 		#QtWidgets.__init__()
 		self.url = url
@@ -320,8 +331,15 @@ class BrowseUrlT(QWebEngineView):
 			self.end_point = end_point
 		else:
 			self.end_point = None
-		
-		self.domain_name = domain_name
+		if domain_name is None:
+			dm = self.url
+			if self.url.startswith('http'):
+				dm = self.url.split('/')[2]
+			if dm.startswith('www.'):
+				dm = dm.replace('www.','',1)
+			self.domain_name = dm
+		else:
+			self.domain_name = domain_name
 		self.user_agent = user_agent
 		self.tmp_dir = tmp_dir
 		self.js_file = js_file
@@ -337,11 +355,31 @@ class BrowseUrlT(QWebEngineView):
 		self.window_dim = window_dim
 		self.grab_window = grab_window
 		self.print_pdf = print_pdf
+		self.tab_web = None
+		self.web = None
+		if quit_now is None:
+			self.quit_now = True
+		else:
+			self.quit_now = quit_now
+		if self.quit_now:
+			self.Browse(self.url)
+		
+	def get_window_object(self):
+		return self.tab_web
+	
+	def _start(self):
 		self.Browse(self.url)
+		
+	def gethtml(self):
+		return self.web.html_file
+	
+	def getcookie_string(self):
+		return self.web.cookie_string
 		
 	def Browse(self,url):
 		win_hide = False
 		show_max = False
+		show_min = False
 		self.tab_web = QtWidgets.QWidget()
 		self.tab_web.hide()
 		if self.window_dim is None:
@@ -350,6 +388,8 @@ class BrowseUrlT(QWebEngineView):
 			win_dim = self.window_dim.lower()
 			if win_dim == 'max':
 				show_max = True
+			elif win_dim == 'min':
+				show_min = True
 			else:
 				if 'x' in win_dim:
 					w,h = win_dim.split('x')
@@ -360,15 +400,15 @@ class BrowseUrlT(QWebEngineView):
 					win_hide = True
 				else:
 					self.tab_web.setMaximumSize(int(w),int(h))
-		self.tab_web.setWindowTitle('Wait!')
-		self.horizontalLayout_5 = QtWidgets.QVBoxLayout(self.tab_web)
+		self.tab_web.setWindowTitle(self.domain_name)
+		self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.tab_web)
 		self.horizontalLayout_5.addWidget(self)
 		
 		self.web = BrowserPage(url,self.set_cookie,self.use_cookie,self.end_point,
 					self.domain_name,self.user_agent,self.tmp_dir,self.js_file,
 					self.out_file,self.wait_for_cookie,self.print_request,
 					self.print_cookies,self.timeout,self.block_request,self.default_block,
-					self.select_request,self.tab_web,self.grab_window,self.print_pdf)
+					self.select_request,self.tab_web,self.grab_window,self.print_pdf,self.quit_now,self)
 		
 		self.web.cookie_signal.connect(self.cookie_found)
 		#self.web.media_signal.connect(self.media_source_found)
@@ -386,6 +426,8 @@ class BrowseUrlT(QWebEngineView):
 			else:
 				if show_max:
 					self.tab_web.showMaximized()
+				elif show_min:
+					self.tab_web.showMinimized()
 				else:
 					self.tab_web.show()
 		else:
@@ -396,15 +438,15 @@ class BrowseUrlT(QWebEngineView):
 		#global web
 		print('cookie')
 		self.add_cookie = False
-		self.setHtml('<html>cookie Obtained</html>')
-		sys.exit(0)
+		if self.quit_now:
+			sys.exit(0)
 
 	@pyqtSlot(str)
 	def media_source_found(self):
 		#global web
-		self.setHtml('<html>Media Source Obtained</html>')
 		print('media found')
-		sys.exit(0)
+		if self.quit_now:
+			sys.exit(0)
 	
 
 
