@@ -1,6 +1,6 @@
 # hlspy
 
-A simple headless browser based on QtWebEngine. Main objective is to create curl/wget like terminal based utility but for javascript heavy web-pages.
+A simple headless browser based on QtWebEngine. Main objective is to create curl/wget like terminal based utility but for javascript heavy web-pages. However, it can be also used as a python library for asynchronous web-scrapping.
 
 ## Dependencies
 
@@ -62,6 +62,8 @@ A simple headless browser based on QtWebEngine. Main objective is to create curl
 		
 		--show-window=max (maximize browser window)
 		
+		--show-window=min (minimize browser window)
+		
 		--grab-window=name.png (image of window will be saved as name.png in current directory)
 		
 		--print-pdf=name.pdf (generate pdf of webpage and save it as name.pdf in current directory)
@@ -78,6 +80,31 @@ A simple headless browser based on QtWebEngine. Main objective is to create curl
 		$ hlspy 'https://duckduckgo.com' --output=out.html --block-request=.jpg,.png,.gif
 		
 		$ hlspy 'https://duckduckgo.com' --output=out.html --print-pdf=name.pdf
+		
+		
+## Use as a Library
+
+Once hlspy is installed use following command
+
+		from hlspy.hls import *
+		
+		web = BrowseUrlT(url,quit_now=False) {check arguments of __init__ function of BrowseUrlT in hls.py for more parameters}
+		
+		use **web.loadFinished** signal to connect to another function asynchronously
+		
+		then use **web._start()** to start loading page
+		
+Some methods to use on web instance:
+		
+1. web.gethtml() : gets html
+		
+2. web.getcookie_string() : get cookies
+		
+3. web.get_window_object() : gets widget of webview. Users need to close the widget manually once desired information has been obtained, otherwise every widget will remain active in the background and will consume memory.
+
+Sample code is located in **sample** directory. Users can directly execute the program if hlspy is installed properly with PyQt5 5.9+.
+		
+
 		
 ## Notes:
 
