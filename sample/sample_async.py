@@ -2,7 +2,6 @@ import sys
 from functools import partial
 from hlspy.hls import *
 
-
 def hello(i,web,url):
 	"""
 	Do something with the task
@@ -12,15 +11,16 @@ def hello(i,web,url):
 	#print(obj.getcookie_string()) #uncomment to print cookie
 	#print(obj.gethtml()) #uncomment to print html
 	obj.get_window_object().close() #close widget
-
+	
 	"""
-	When BrowseUrlT is initiated with show_window=True, then asynchronous code 
-	works properly and all widgets are closed properly when operation is over.
-	Users can use window_dim='min' as optional argument, to minimize all the 
+	In GUI mode, When BrowseUrlT is initiated with show_window=True, 
+	then asynchronous code works properly and all widgets are closed 
+	accordingly one by one as per get_window_object().close() is executed. 
+	Users can use window_dim='min' as an optional argument, to minimize all 
 	widgets. In a complete headless environment, users need to use xvfb and 
 	should run the application by prefixing 
-	'xvfb-run --server-args="-screen 0 640x480x16"' to the command of the 
-	application.
+	'xvfb-run --server-args="-screen 0 640x480x16"' to the command of 
+	the application.
 
 	In GUI mode if user wants to run headlessly, then they should set 
 	'show_window=False', however it has some problems. In GUI mode, 
@@ -28,7 +28,11 @@ def hello(i,web,url):
 	get_window_object().close() then program quits without waiting for 
 	completion of other tasks. Therefore, users need to be careful
 	and should use the close() method only once in this case and that too only 
-	after all tasks have been completed so as to free up memory.
+	after all tasks have been completed so as to free up memory. Alternately user
+	can use 'timeout' field and leave closing of widgets to library, but in this
+	case also all widgets are closed with the closing of a single widget in GUI
+	mode. Therefore, users need to allot larger timeout value within which all tasks
+	can be completed, in case show_window=False is used.
 	"""
 
 if __name__ == "__main__":
@@ -91,10 +95,9 @@ if __name__ == "__main__":
 	12. print_cookies=None or True (print cookies from all domains on terminal 
 		in realtime)
 		
-	13. timeout=IN_SECONDS (wait for this many seconds before closing. This 
-		argument is pretty meaningless when used in library at the moment. Users
-		need to devise their own logic in the asynchronous function for waiting
-		before closing the widget)
+	13. timeout=IN_SECONDS (wait for this many seconds before closing, once 
+		loading has finished. It won't be of use if user manually closes the 
+		widget using command get_window_object().close() before timeout)
 
 	14. block_request= (comma separated list of resources to be blocked. 
 		If requested url contain any of these substring then it will be blocked
