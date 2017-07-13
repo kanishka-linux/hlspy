@@ -1,4 +1,3 @@
-import os
 import sys
 from functools import partial
 from hlspy.hls import *
@@ -28,8 +27,8 @@ def hello(i,web,url):
 	while running headlessly, once a task completes and user uses 
 	get_window_object().close() then program quits without waiting for 
 	completion of other tasks. Therefore, users need to be careful
-	and should use the close() method only once and that too only after all 
-	tasks have been completed so as to free up memory.
+	and should use the close() method only once in this case and that too only 
+	after all tasks have been completed so as to free up memory.
 	"""
 
 if __name__ == "__main__":
@@ -78,13 +77,13 @@ if __name__ == "__main__":
 		directly.)
 		
 	9. out_file=None,False or absolute path of file name (By default html 
-		output will be displayed on terminal i.e. if None is used. If absolute 
+		output will be displayed on terminal. If absolute 
 		path of file name is supplied then output will be dumped into that 
 		file. If False is used the output will not be showed on terminal and 
 		won't be dumped in any file)
 		
 	10. wait_for_cookie=None or True (don't quit till cookie is obtained, 
-		should be used in conjuction with the filed end_point)
+		should be used in conjuction with the field end_point)
 		
 	11. print_request=None or True (print requested resource urls on terminal 
 		in realtime)
