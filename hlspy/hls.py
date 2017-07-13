@@ -277,7 +277,10 @@ class BrowserPage(QWebEnginePage):
 	def _decide_quit(self):
 		if self.quit_now:
 			sys.exit(0)
-		
+		elif not self.quit_now and self.timeout:
+			print(self.quit_now,self.timeout)
+			self.parent.tab_web.close()
+			
 	def _loadProgress(self):
 		result =''
 		self.toHtml(self.htm_src)
