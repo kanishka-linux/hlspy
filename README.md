@@ -5,7 +5,7 @@ A simple headless browser based on QtWebEngine (Chromium) as backend. Main objec
 ## Dependencies
 
 		Python 3.5+, PyQt5 5.9+
-
+		
 # Installation
 
 		$ git clone https://github.com/kanishka-linux/hlspy
@@ -15,9 +15,15 @@ A simple headless browser based on QtWebEngine (Chromium) as backend. Main objec
 		$ sudo pip3 install pkg_available_in_directory (or pip install pkg_available_in_directory)
 			
 # Uninstall
-
-		$ sudo pip3 uninstall hlspy
-			
+		
+		uninstalling hlspy
+		
+		$ sudo pip3 uninstall hlspy 
+		
+		for uninstalling dependencies
+		
+		$ sudo pip3 uninstall PyQt5 sip
+		
 # Documentation
 
 		$ hlspy URL [options]
@@ -121,3 +127,7 @@ Sample code is located in ![sample](/sample/sample_async.py) directory. Users ca
 6. printing pdf does not require --show-window option, however screenshot captured using --grab-window will require --show-window option.
 
 7. --print-pdf works only with PyQt5 5.9+
+
+8. In most of the gnu/linux systems, PyQt5 available in official repositories is old and some of them do not package qtwebengine which is based on chromium browser. Therefore it is advisable to use pip to install PyQt5 which always contains latest updated version. 
+
+9. If official repository of gnu/linux system contains latest PyQt5 with qtwebengine, then user should install PyQt5 from official repository instead of using pip. After that user should remove or comment out *install_requires* field in the setup.py before proceeding installation.
