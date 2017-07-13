@@ -36,7 +36,8 @@ class BrowserPage(QWebEnginePage):
 	media_signal = pyqtSignal(str)
 	media_received = pyqtSignal(str)
 	#val_signal = pyqtSignal(str)
-	def __init__(self,url,set_cookie=None,use_cookie=None,end_point=None,
+	def __init__(
+			self,url,set_cookie=None,use_cookie=None,end_point=None,
 			domain_name=None,user_agent=None,tmp_dir=None,js_file=None,
 			out_file=None,wait_for_cookie=None,print_request=None,
 			print_cookies=None,timeout=None,block_request=None,default_block=None,
@@ -264,10 +265,10 @@ class BrowserPage(QWebEnginePage):
 			self._decide_quit()
 	
 	def val_scr(self,x):
-		print('===============java----------scr')
+		print('===============javascript=========')
 		val = x
 		print(val)
-		print('===============java----------scr')
+		print('===============javascript=========')
 		if self.timeout:
 			self.timer.start(self.timeout*1000)
 		else:
@@ -284,7 +285,7 @@ class BrowserPage(QWebEnginePage):
 		
 	def _loadFinished(self):
 		result = ""
-		print('Finished')
+		print('Load Finished')
 		if self.grab_window:
 			self.tab_web.grab().save(self.grab_window)
 			
@@ -312,7 +313,8 @@ class BrowserPage(QWebEnginePage):
 
 class BrowseUrlT(QWebEngineView):
 	#cookie_s = pyqtSignal(str)
-	def __init__(self,url,set_cookie=None,use_cookie=None,end_point=None,
+	def __init__(
+			self,url,set_cookie=None,use_cookie=None,end_point=None,
 			domain_name=None,user_agent=None,tmp_dir=None,js_file=None,
 			out_file=None,wait_for_cookie=None,print_request=None,
 			print_cookies=None,timeout=None,block_request=None,default_block=None,
@@ -404,19 +406,18 @@ class BrowseUrlT(QWebEngineView):
 		self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.tab_web)
 		self.horizontalLayout_5.addWidget(self)
 		
-		self.web = BrowserPage(url,self.set_cookie,self.use_cookie,self.end_point,
+		self.web = BrowserPage(
+					url,self.set_cookie,self.use_cookie,self.end_point,
 					self.domain_name,self.user_agent,self.tmp_dir,self.js_file,
 					self.out_file,self.wait_for_cookie,self.print_request,
-					self.print_cookies,self.timeout,self.block_request,self.default_block,
-					self.select_request,self.tab_web,self.grab_window,self.print_pdf,self.quit_now,self)
+					self.print_cookies,self.timeout,self.block_request,
+					self.default_block,self.select_request,self.tab_web,
+					self.grab_window,self.print_pdf,self.quit_now,self)
 		
 		self.web.cookie_signal.connect(self.cookie_found)
 		#self.web.media_signal.connect(self.media_source_found)
 		self.setPage(self.web)
-		print('add_cookie')
 		self.load(QUrl(url))
-		print('--')
-		#self.load(QUrl(url))
 		self.cnt = 1
 		
 		QtWidgets.QApplication.processEvents()
@@ -435,7 +436,6 @@ class BrowseUrlT(QWebEngineView):
 		
 	@pyqtSlot(str)
 	def cookie_found(self):
-		#global web
 		print('cookie')
 		self.add_cookie = False
 		if self.quit_now:
@@ -443,7 +443,6 @@ class BrowseUrlT(QWebEngineView):
 
 	@pyqtSlot(str)
 	def media_source_found(self):
-		#global web
 		print('media found')
 		if self.quit_now:
 			sys.exit(0)
