@@ -1,6 +1,6 @@
 # hlspy
 
-A simple headless browser based on QtWebEngine (Chromium) as backend. Main objective is to create curl/wget like terminal based utility but for javascript heavy web-pages. However, it can be also used as a python library for asynchronous web-scrapping.
+A simple headless browser based on QtWebEngine (Chromium) as backend. Main objective is to create curl/wget like terminal based utility but for javascript heavy web-pages. However, it can be also used as a python library for asynchronous web scraping.
 
 ## Dependencies
 
