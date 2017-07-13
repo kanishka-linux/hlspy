@@ -85,7 +85,7 @@ class BrowserPage(QWebEnginePage):
 		self.c_list = []
 		t = ''
 		self.cnt = 0
-		print(self.use_cookie)
+		#print(self.use_cookie)
 		if self.use_cookie:
 			self.m.deleteAllCookies()
 			self._set_cookie(use_cookie)
