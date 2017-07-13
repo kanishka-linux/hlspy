@@ -92,7 +92,7 @@ if __name__ == "__main__":
 		in realtime)
 		
 	13. timeout=IN_SECONDS (wait for this many seconds before closing. This 
-		argument is pretty meaningles when used in library at the moment. Users
+		argument is pretty meaningless when used in library at the moment. Users
 		need to devise their own logic in the asynchronous function for waiting
 		before closing the widget)
 
@@ -103,8 +103,9 @@ if __name__ == "__main__":
 	15. default_block=None or True (enables default simple adblock for headless 
 		browsing)
 		
-	16. select_request= (print only particular request on terminal. 
-		e.g.: select_resource=.css)
+	16. select_request= (print only particular request on terminal, currently 
+		does not support more than one field.
+		e.g.: select_resource=.css )
 		
 	17. show_window=True or False (default is False)
 
