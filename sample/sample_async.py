@@ -12,6 +12,27 @@ def hello(i,web,url):
 	#print(obj.gethtml()) #uncomment to print html
 	obj.get_window_object().close() #close widget
 	
+
+if __name__ == "__main__":
+	app = QtWidgets.QApplication(sys.argv)
+	url_arr = [
+		'https://en.wikipedia.org','https://duckduckgo.com',
+		'https://www.google.com'
+		]
+	web_arr = []
+	
+	for i,url in enumerate(url_arr):
+		web_obj = BrowseUrlT(
+			url,out_file=False,quit_now=False,show_window=True,window_dim='500',
+			js_file='console.log("javascript hello world")')
+		web_arr.append(web_obj)
+		web_arr[len(web_arr)-1].loadFinished.connect(partial(hello,i,web_arr,url))
+		web_arr[len(web_arr)-1]._start()
+
+	ret = app.exec_()
+	sys.exit(ret)
+	
+	
 	"""
 	In GUI mode, When BrowseUrlT is initiated with show_window=True, 
 	then asynchronous code works properly and all widgets are closed 
@@ -33,28 +54,9 @@ def hello(i,web,url):
 	case also all widgets are closed with the closing of a single widget in GUI
 	mode. Therefore, users need to allot larger timeout value within which all tasks
 	can be completed, in case show_window=False is used.
-	"""
-
-if __name__ == "__main__":
-	app = QtWidgets.QApplication(sys.argv)
-	url_arr = [
-		'https://en.wikipedia.org','https://duckduckgo.com',
-		'https://www.google.com'
-		]
-	web_arr = []
 	
-	for i,url in enumerate(url_arr):
-		web_obj = BrowseUrlT(
-			url,out_file=False,quit_now=False,show_window=True,window_dim='500',
-			js_file='console.log("javascript hello world")')
-		web_arr.append(web_obj)
-		web_arr[len(web_arr)-1].loadFinished.connect(partial(hello,i,web_arr,url))
-		web_arr[len(web_arr)-1]._start()
 
-	ret = app.exec_()
-	sys.exit(ret)
-
-	"""
+	
 	List of Arguments to BrowseUrlT
 
 	1. quit_now=False (It is mandatory when using as library. Command line 
