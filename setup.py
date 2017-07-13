@@ -33,6 +33,6 @@ setup(
     packages=['hlspy'],
     include_package_data=True,
     entry_points={'console_scripts':['hlspy = hlspy.__init__:main']},
-    install_requires=['PyQt5'],
+    install_requires=['PyQt5','sip'],
     description="A simple headless browser based on QtWebEngine",
 )
