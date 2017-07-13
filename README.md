@@ -88,11 +88,11 @@ Once hlspy is installed use following command
 
 		from hlspy.hls import *
 		
-		web = BrowseUrlT(url,quit_now=False) {check arguments of __init__ function of BrowseUrlT in hls.py for more parameters}
+		web = BrowseUrlT(url,quit_now=False) {check sample code for more explanation}
 		
-		use **web.loadFinished** signal to connect to another function asynchronously
+		use web.loadFinished signal to connect to another function asynchronously
 		
-		then use **web._start()** to start loading page
+		then use web._start() to start loading page
 		
 Some methods to use on web instance:
 		
@@ -100,9 +100,9 @@ Some methods to use on web instance:
 		
 2. web.getcookie_string() : get cookies
 		
-3. web.get_window_object() : gets widget of webview. Users need to close the widget manually using command **web.get_window_object().close()** once desired information has been obtained, otherwise every widget will remain active in the background and will consume memory.
+3. web.get_window_object() : gets widget of webview. Users need to close the widget manually using command web.get_window_object().close() once desired information has been obtained, otherwise every widget will remain active in the background and will consume memory.
 
-Sample code is located in **sample** directory. Users can directly execute the program if hlspy is installed properly with PyQt5 5.9+.
+Sample code is located in ![sample](/sample/sample_async.py) directory. Users can directly execute the program if hlspy is installed properly with PyQt5 5.9+.
 		
 
 		
