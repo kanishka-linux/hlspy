@@ -1,6 +1,14 @@
 # hlspy
 
-A simple headless browser based on QtWebEngine (Chromium) as backend. Main objective is to create curl/wget like terminal based utility but for javascript heavy web-pages. However, it can be also used as a python library for asynchronous web scraping.
+A simple headless browser based on QtWebEngine (Chromium) as backend. Main objective is to create curl/wget like terminal based utility but for javascript heavy web pages. However, it can be also used as a python library for accessing dynamic web pages asynchronously.
+
+### Brief Description
+
+1. The project initially started as a command-line utility to mimic curl/wget but for javascript heavy web pages. It is possible to use chrome from version 59 as a headless browser, but as of now it provides only limited command-line functionalities. hlspy provides easy way to set up and use cookies, allows inspecting requested network resource urls and cookie ids on terminal in realtime, provides default adblock and customized way to block url requests - and all these functionalities with just passing few command line arguments, without writing any javascript. 
+
+2. It is possible to use hlspy as a python library for accessing dynamic, javascript heavy web pages and that too in a complete asynchronous manner. This feature can be useful for both asynchronous scraping and testing. Testing is possible only with the help of javascript, and javascript console messages will be displayed on terminal. 
+
+3. hlspy also allows creating custom launchers for web sites using command-line. It is useful feature for creating web shortcut. Launchers can be launched with hlspy and will open website in a lightweight hlspy browser in windowed mode.
 
 ## Dependencies
 
@@ -74,6 +82,9 @@ A simple headless browser based on QtWebEngine (Chromium) as backend. Main objec
 		
 		--print-pdf=name.pdf (generate pdf of webpage and save it as name.pdf in current directory)
 		
+		--create-launcher=name (create launcher with 'name' for particular hlspy command as shortcut to website)
+		
+		--launch name (launch launcher created with create-launcher command)
 		
 		Examples:
 		
@@ -83,10 +94,19 @@ A simple headless browser based on QtWebEngine (Chromium) as backend. Main objec
 		
 		$ hlspy 'https://duckduckgo.com' --print-request --output=out.html
 		
+		Blocking request to images:
+		
 		$ hlspy 'https://duckduckgo.com' --output=out.html --block-request=.jpg,.png,.gif
+		
+		Print pdf
 		
 		$ hlspy 'https://duckduckgo.com' --output=out.html --print-pdf=name.pdf
 		
+		Creating launcher and launching sites:
+		
+		$ hlspy 'https://duckduckgo.com' --output=out.html --show-window=max --timeout=1000 --create-launcher=ddg
+		
+		$ hlspy --launch ddg
 		
 ## Use as a Library
 
