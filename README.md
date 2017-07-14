@@ -104,7 +104,7 @@ A simple headless browser based on QtWebEngine (Chromium) as backend. Main objec
 		
 		Creating launcher and launching sites:
 		
-		$ hlspy 'https://duckduckgo.com' --output=out.html --show-window=max --timeout=1000 --create-launcher=ddg
+		$ hlspy 'https://duckduckgo.com' --output=false --show-window=max --timeout=1000 --create-launcher=ddg
 		
 		$ hlspy --launch ddg
 		
