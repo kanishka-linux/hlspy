@@ -140,14 +140,12 @@ Sample code is located in ![sample](/sample/sample_async.py) directory. Users ca
 
 3. --js-file: It will execute javascript and will also display console.log messages.
 
-4. COOKIE_FILE, JS_FILE, OUT_FILE and all external file path name should be relative to current working directory.
+4. --cookie-end-pt should be used with --wait-for-cookie. In this way hlspy will wait till the particular cookie_id appears and only then it will quit. (useful for webpage redirection)
 
-5. --cookie-end-pt should be used with --wait-for-cookie. In this way hlspy will wait till the particular cookie_id appears and only then it will quit. (useful for webpage redirection)
+5. printing pdf does not require --show-window option, however screenshot captured using --grab-window will require --show-window option.
 
-6. printing pdf does not require --show-window option, however screenshot captured using --grab-window will require --show-window option.
+6. --print-pdf works only with PyQt5 5.9+
 
-7. --print-pdf works only with PyQt5 5.9+
+7. In most of the gnu/linux systems, PyQt5 available in official repositories is old and some of them do not package qtwebengine which is based on chromium browser. Therefore it is advisable to use pip to install PyQt5 which always contains latest updated version. 
 
-8. In most of the gnu/linux systems, PyQt5 available in official repositories is old and some of them do not package qtwebengine which is based on chromium browser. Therefore it is advisable to use pip to install PyQt5 which always contains latest updated version. 
-
-9. If official repository of gnu/linux system contains latest PyQt5 with qtwebengine, then user should install PyQt5 from official repository instead of using pip. After that user should remove or comment out *install_requires* field in the setup.py before proceeding installation.
+8. If official repository of gnu/linux system contains latest PyQt5 with qtwebengine, then user should install PyQt5 from official repository instead of using pip. After that user should remove or comment out *install_requires* field in the setup.py before proceeding installation.
