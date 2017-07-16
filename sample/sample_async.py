@@ -123,7 +123,6 @@ if __name__ == "__main__":
 	20. print_pdf=file_name (convert page to pdf and save as file_name.
 		File name should absolute path)
 
-	Note: while using application as command line all file path should be 
-	relative to directory, but while using as library all file paths must be 
-	absolute.
+	Note: while using application as command-line file path can be relative
+	or absolute, but while using as library all file paths must be absolute.
 	"""
