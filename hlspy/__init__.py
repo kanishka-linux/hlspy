@@ -54,12 +54,11 @@ def main():
 		'--timeout=IN_SECONDS','--block-request=','--show-window',
 		'--show-window=wxh','--grab-window=image.png','--print-pdf=web.pdf'
 		]
-	launcher_template = """
-#!/usr/bin/env xdg-open
+	launcher_template = """#!/usr/bin/env xdg-open
 [Desktop Entry]
 Type=Application
-Name=
-Exec=
+Name={0}
+Exec={1}
 Terminal=false
 NoDisplay=false
 """
@@ -146,24 +145,22 @@ NoDisplay=false
 				else:
 					if not l.startswith('--create-launcher='):
 						launcher_exec = launcher_exec + ' ' + l
-			#print(launcher_exec)
-			edit_template = launcher_template.replace("Name=","Name="+launcher_name)
-			edit_template = edit_template.replace("Exec=","Exec="+launcher_exec)
+						
+			edit_template = launcher_template.format(launcher_name,launcher_exec)
+			
 			if launcher_name and launcher_exec:
 				launch_home = os.path.join(home,launcher_name+'.desktop')
-				f = open(launch_home,'wb')
-				f.write(edit_template.encode('utf-8'))
-				f.close()
+				with open(launch_home,'wb') as f:
+					f.write(edit_template.encode('utf-8'))
 		elif i.startswith('--launch'):
 			launcher_name = os.path.join(home,sys.argv[j+1] + '.desktop')
 			if os.path.isfile(launcher_name):
-				if sys.platform == 'linux':
+				if sys.platform == 'linu':
 					subprocess.Popen(['xdg-open',launcher_name])
 					sys.exit(0)
 				else:
-					f = open(launcher_name,'r')
-					lines = f.readlines()
-					f.close()
+					with open(launcher_name,'r') as f:
+						lines = f.readlines()
 					for l in lines:
 						if l.startswith('Exec='):
 							cmd = (l.replace('Exec=','',1).strip()).split(' ')
