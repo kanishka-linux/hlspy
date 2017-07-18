@@ -27,7 +27,7 @@ if __name__ == "__main__":
 			js_file='console.log("javascript hello world")')
 		web_arr.append(web_obj)
 		web_arr[len(web_arr)-1].loadFinished.connect(partial(hello,i,web_arr,url))
-		web_arr[len(web_arr)-1]._start()
+		web_arr[len(web_arr)-1].start_loading()
 
 	ret = app.exec_()
 	sys.exit(ret)
