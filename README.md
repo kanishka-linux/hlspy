@@ -118,7 +118,7 @@ Once hlspy is installed use following command
 		
 		use web.loadFinished signal to connect to another function asynchronously
 		
-		then use web._start() to start loading page
+		then use web.start_loading() to start loading page
 		
 Some methods to use on web instance:
 		
