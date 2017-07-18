@@ -61,9 +61,8 @@ class BrowserPage(QWebEnginePage):
 		self.print_pdf = print_pdf
 		if self.js_file is not None:
 			if os.path.isfile(self.js_file):
-				f = open(self.js_file,encoding='utf-8',mode='r')
-				self.js_content = f.read()
-				f.close()
+				with open(self.js_file,encoding='utf-8',mode='r') as f:
+					self.js_content = f.read()
 			else:
 				self.js_content = self.js_file
 		x = ''
@@ -234,12 +233,11 @@ class BrowserPage(QWebEnginePage):
 			if self.set_cookie is not None:
 				cc = self.set_cookie
 				if not os.path.exists(cc):
-					f = open(cc,'w')
-					f.write(str1)
+					with open(cc,'w') as f:
+						f.write(str1)
 				else:
-					f = open(cc,'a')
-					f.write('\n'+str1)
-				f.close()
+					with open(cc,'a') as f:
+						f.write('\n'+str1)
 			
 	def _getTime(self,i):
 		j = re.findall('expires=[^;]*',i)
@@ -372,7 +370,7 @@ class BrowseUrlT(QWebEngineView):
 	def get_window_object(self):
 		return self.tab_web
 	
-	def _start(self):
+	def start_loading(self):
 		self.Browse(self.url)
 		
 	def gethtml(self):
