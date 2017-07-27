@@ -23,7 +23,7 @@ import re
 import time
 import calendar
 from datetime import datetime
-
+from functools import partial
 from PyQt5 import QtCore,QtNetwork,QtWidgets,QtWebEngineWidgets,QtWebEngineCore
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 from PyQt5.QtCore import QUrl,pyqtSlot,pyqtSignal
@@ -33,16 +33,16 @@ from netmon import NetWorkManager
 				
 class BrowserPage(QWebEnginePage):  
 	cookie_signal = pyqtSignal(str)
-	media_signal = pyqtSignal(str)
-	media_received = pyqtSignal(str)
+	link_signal = pyqtSignal(str)
+	link_received = pyqtSignal(str)
 	#val_signal = pyqtSignal(str)
 	def __init__(
-			self,url,set_cookie=None,use_cookie=None,end_point=None,
+			self,url=None,set_cookie=None,use_cookie=None,end_point=None,
 			domain_name=None,user_agent=None,tmp_dir=None,js_file=None,
 			out_file=None,wait_for_cookie=None,print_request=None,
 			print_cookies=None,timeout=None,block_request=None,default_block=None,
 			select_request=None,tab_web=None,grab_window=None,print_pdf=None,
-			quit_now=None,parent=None):
+			quit_now=None,parent=None,get_link=None):
 		super(BrowserPage, self).__init__()
 		self.user_agent = user_agent
 		self.set_cookie = set_cookie
@@ -72,9 +72,11 @@ class BrowserPage(QWebEnginePage):
 		self.loadProgress.connect(self._loadProgress)
 		self.loadStarted.connect(self._loadstart)
 		self.pdfPrintingFinished.connect(self._pdf_finished)
-		p = NetWorkManager(self,url,print_request,block_request,default_block,select_request)
-		p.netS.connect(lambda y = x : self.urlMedia(y))
-		self.media_received.connect(lambda y = x : self.urlMedia(y))
+		p = NetWorkManager(
+			self,url,print_request,block_request,default_block,select_request,
+			get_link)
+		p.netS.connect(lambda y = x : self.url_link(y))
+		self.link_received.connect(lambda y = x : self.url_link(y))
 		self.profile().setRequestInterceptor(p)
 		#self.profile().clearHttpCache()
 		self.profile().setCachePath(self.tmp_dir)
@@ -99,24 +101,22 @@ class BrowserPage(QWebEnginePage):
 		self.cookie_string = ''
 		self.quit_now = quit_now
 		self.timer = QtCore.QTimer()
-		self.timer.timeout.connect(self.quit_browser)
+		self.timer.timeout.connect(self._decide_quit)
 		self.timer.setSingleShot(True)
-	
-	def quit_browser(self):
-		self._decide_quit()
+		self.link_request = None
 		
 	@pyqtSlot(str)
-	def urlMedia(self,info):
+	def url_link(self,info):
 		lnk = os.path.join(self.tmp_dir,'lnk.txt')
 		if os.path.exists(lnk):
 			os.remove(lnk)
 		print('*******')
 		print(info)
-		f = open(lnk,'w')
-		f.write(info)
-		f.close()
+		self.link_request = info
+		with open(lnk,'w') as f:
+			f.write(info)
 		print(self.url,'--url---','--312---')
-		self.media_signal.emit(info)
+		self.link_signal.emit(info)
 		print('********')
 		
 	@pyqtSlot(str)
@@ -262,9 +262,8 @@ class BrowserPage(QWebEnginePage):
 		if not self.timeout:
 			self._decide_quit()
 	
-	def val_scr(self,x):
+	def val_scr(self,val):
 		print('===============javascript=========')
-		val = x
 		print(val)
 		print('===============javascript=========')
 		if self.timeout:
@@ -273,31 +272,32 @@ class BrowserPage(QWebEnginePage):
 			self._decide_quit()
 			
 	def _decide_quit(self):
+		self.write_external_file()
 		if self.quit_now:
 			sys.exit(0)
 		elif not self.quit_now and self.timeout:
-			print(self.quit_now,self.timeout)
 			self.parent.tab_web.close()
 			
 	def _loadProgress(self):
 		result =''
 		self.toHtml(self.htm_src)
 		self.cnt = self.cnt+1
-		
+	
+	def write_external_file(self):
+		if self.out_file is None:
+			print(self.html_file)
+		elif type(self.out_file) is bool:
+			pass
+		else:
+			with open(self.out_file,'wb') as f:
+				f.write(self.html_file.encode('utf-8'))
+	
 	def _loadFinished(self):
 		result = ""
 		print('Load Finished')
 		if self.grab_window:
 			self.tab_web.grab().save(self.grab_window)
 			
-		if self.out_file is None:
-			print(self.html_file)
-		elif type(self.out_file) is bool:
-			pass
-		else:
-			f = open(self.out_file,'wb')
-			f.write(self.html_file.encode('utf-8'))
-			f.close()
 		if self.js_content is not None:
 			self.runJavaScript(self.js_content,self.val_scr)
 			if self.print_pdf:
@@ -310,17 +310,19 @@ class BrowserPage(QWebEnginePage):
 			elif self.timeout:
 				if self.print_pdf:
 					self.printToPdf(self.print_pdf)
-				self.timer.start(self.timeout*1000)
+				else:
+					self.timer.start(self.timeout*1000)
 
 class BrowseUrlT(QWebEngineView):
 	#cookie_s = pyqtSignal(str)
 	def __init__(
-			self,url,set_cookie=None,use_cookie=None,end_point=None,
+			self,url=None,set_cookie=None,use_cookie=None,end_point=None,
 			domain_name=None,user_agent=None,tmp_dir=None,js_file=None,
 			out_file=None,wait_for_cookie=None,print_request=None,
 			print_cookies=None,timeout=None,block_request=None,default_block=None,
 			select_request=None,show_window=None,window_dim=None,grab_window=None,
-			print_pdf=None,quit_now=None):
+			print_pdf=None,quit_now=None,set_html=None,set_html_path=None,
+			get_link=None):
 		super(BrowseUrlT, self).__init__()
 		#QtWidgets.__init__()
 		self.url = url
@@ -346,7 +348,10 @@ class BrowseUrlT(QWebEngineView):
 		self.user_agent = user_agent
 		self.tmp_dir = tmp_dir
 		self.js_file = js_file
+		self.set_html = set_html
+		self.set_html_path = set_html_path
 		self.out_file = out_file
+		self.get_link = get_link
 		self.wait_for_cookie = wait_for_cookie
 		self.print_request = print_request
 		self.print_cookies = print_cookies
@@ -413,12 +418,20 @@ class BrowseUrlT(QWebEngineView):
 					self.out_file,self.wait_for_cookie,self.print_request,
 					self.print_cookies,self.timeout,self.block_request,
 					self.default_block,self.select_request,self.tab_web,
-					self.grab_window,self.print_pdf,self.quit_now,self)
+					self.grab_window,self.print_pdf,self.quit_now,self,
+					self.get_link)
 		
 		self.web.cookie_signal.connect(self.cookie_found)
-		#self.web.media_signal.connect(self.media_source_found)
+		self.web.link_signal.connect(self.link_source_found)
 		self.setPage(self.web)
-		self.load(QUrl(url))
+		if self.set_html or self.set_html_path:
+			if self.set_html_path is not None:
+				if os.path.isfile(self.set_html_path):
+					with open(self.set_html_path,encoding='utf-8',mode='r') as f:
+						self.set_html = f.read()
+			self.setHtml(self.set_html)
+		elif self.url is not None:
+			self.load(QUrl(url))
 		self.cnt = 1
 		
 		QtWidgets.QApplication.processEvents()
@@ -439,13 +452,13 @@ class BrowseUrlT(QWebEngineView):
 	def cookie_found(self):
 		print('cookie')
 		self.add_cookie = False
-		if self.quit_now:
+		if self.quit_now and not self.timeout:
 			sys.exit(0)
 
 	@pyqtSlot(str)
-	def media_source_found(self):
-		print('media found')
-		if self.quit_now:
+	def link_source_found(self):
+		print('link found')
+		if self.quit_now and not self.timeout:
 			sys.exit(0)
 	
 

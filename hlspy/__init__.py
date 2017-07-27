@@ -25,10 +25,8 @@ if getattr(sys,'frozen',False):
 	BASEDIR,BASEFILE = os.path.split(os.path.abspath(sys.executable))
 else:
 	BASEDIR,BASEFILE = os.path.split(os.path.abspath(__file__))
-#print(BASEDIR,BASEFILE,os.getcwd())
 sys.path.insert(0,BASEDIR)
 
-#print(sys.path,'---path---')    
 
 from PyQt5 import QtWidgets
 from hls import BrowseUrlT
@@ -52,7 +50,8 @@ def main():
 		'--select-request=(print selected request)',
 		'--print-cookies','--default-block (enable default adblock)',
 		'--timeout=IN_SECONDS','--block-request=','--show-window',
-		'--show-window=wxh','--grab-window=image.png','--print-pdf=web.pdf'
+		'--show-window=wxh','--grab-window=image.png','--print-pdf=web.pdf',
+		'--set-html=','--set-html-path=','--get-link='
 		]
 	launcher_template = """#!/usr/bin/env xdg-open
 [Desktop Entry]
@@ -72,7 +71,7 @@ NoDisplay=false
 	out_file = js_file = block_request = select_request = window_dim = print_pdf = None
 	wait_for_cookie = print_request = print_cookies = default_block = False
 	show_window = False
-	grab_window = None
+	grab_window = set_html = set_html_path = get_link = None
 	timeout = 0
 	for  j,i in enumerate(sys.argv):
 		if i.startswith('--set-cookie-file='):
@@ -128,6 +127,12 @@ NoDisplay=false
 			print_pdf = 'web.pdf'
 			if '=' in i:
 				print_pdf = i.split('=')[1]
+		elif i.startswith('--set-html'):
+			set_html = i.split('=')[1]
+		elif i.startswith('--get-link'):
+			get_link = i.split('=')[1]
+		elif i.startswith('--set-html-path'):
+			set_html_path = i.split('=')[1]
 		elif i.startswith('--help'):
 			for i in option_arr:
 				print(i)
@@ -155,7 +160,7 @@ NoDisplay=false
 		elif i.startswith('--launch'):
 			launcher_name = os.path.join(home,sys.argv[j+1] + '.desktop')
 			if os.path.isfile(launcher_name):
-				if sys.platform == 'linu':
+				if sys.platform == 'linux':
 					subprocess.Popen(['xdg-open',launcher_name])
 					sys.exit(0)
 				else:
@@ -168,8 +173,6 @@ NoDisplay=false
 							subprocess.Popen(cmd)
 							sys.exit(0)
 			
-	#print(url)
-	#print(sys.argv)
 	if t_dir is None:
 		t_dir = home
 	if set_cookie is not None:
@@ -182,6 +185,9 @@ NoDisplay=false
 	
 	if js_file:
 		js_file = define_path(js_file)
+	
+	if set_html_path:
+		set_html_path = define_path(set_html_path)
 	
 	if out_file:
 		out_file = define_path(out_file)
@@ -203,14 +209,15 @@ NoDisplay=false
 		user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:45.0) Gecko/20100101 Firefox/45.0'
 		
 		
-	web = BrowseUrlT(url,set_cookie=set_cookie,use_cookie=use_cookie,
+	web = BrowseUrlT(url=url,set_cookie=set_cookie,use_cookie=use_cookie,
 			end_point=end_point,domain_name=domain_name,user_agent=user_agent,
 			tmp_dir=t_dir,js_file=js_file,out_file=out_file,
 			wait_for_cookie=wait_for_cookie,print_request=print_request,
 			print_cookies=print_cookies,timeout=timeout,block_request=block_request,
 			default_block=default_block,select_request=select_request,
 			show_window=show_window,window_dim=window_dim,grab_window=grab_window,
-			print_pdf=print_pdf)
+			print_pdf=print_pdf,set_html=set_html,set_html_path=set_html_path,
+			get_link=get_link)
 			
 	ret = app.exec_()
 	sys.exit(ret)
