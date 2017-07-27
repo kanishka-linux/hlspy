@@ -22,7 +22,9 @@ from PyQt5.QtCore import pyqtSignal
 
 class NetWorkManager(QtWebEngineCore.QWebEngineUrlRequestInterceptor):
 	netS = pyqtSignal(str)
-	def __init__(self,parent,url,print_request,block_request,default_block,select_request):
+	def __init__(
+			self,parent,url,print_request,block_request,default_block,
+			select_request,get_link):
 		super(NetWorkManager, self).__init__(parent)
 		self.url = url
 		self.print_request = print_request
@@ -32,13 +34,16 @@ class NetWorkManager(QtWebEngineCore.QWebEngineUrlRequestInterceptor):
 			self.block_request = []
 		self.default_block = default_block
 		self.select_request = select_request
+		self.get_link = get_link
 		
 	def interceptRequest(self,info):
 		t = info.requestUrl()
 		urlLnk = t.url()
+		if self.get_link:
+			if self.get_link in urlLnk:
+				self.netS.emit(urlLnk)
 		block_url = ''
 		
-		#print(self.select_request,'--select-request--')
 		lower_case = urlLnk.lower()
 		lst = []
 		if self.default_block:
@@ -65,5 +70,3 @@ class NetWorkManager(QtWebEngineCore.QWebEngineUrlRequestInterceptor):
 			
 		if (self.select_request and self.select_request in urlLnk) or self.print_request:
 			print(urlLnk)
-			if block:
-				print('-----------blocking: {0}-----------'.format(urlLnk))
