@@ -20,7 +20,7 @@ A simple headless browser based on QtWebEngine (Chromium) as backend. Main objec
 		$ cd hlspy
 		$ python3 setup.py sdist (or python setup.py sdist)
 		$ cd dist
-		$ sudo pip3 install pkg_available_in_directory (or pip install pkg_available_in_directory)
+		$ sudo pip3 install pkg_available_in_directory (or pip install pkg_available_in_directory) {where **pkg_available_in_directory** is the exact name of the package created in the **dist** folder}
 			
 # Uninstall
 		
