@@ -364,7 +364,7 @@ class BrowserPage(QWebEnginePage):
             setTimeout(scroll_to_document, 200, val+document.body.clientHeight);
         }else{
             setTimeout(scroll_to_document, 200, 0);
-            //window.location.href = window.location.href;
+            setTimeout(window.scrollTo, 100, 0, 0);
         }
     }
     setTimeout(scroll_to_document, 200, document.body.clientHeight);
