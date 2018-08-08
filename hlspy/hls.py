@@ -357,7 +357,6 @@ class BrowserPage(QWebEnginePage):
         console.log(val);
         console.log(`total_document_height=${total_height}`);
         if (val == 0){
-            window.location.href = window.location.href;
             window.scrollTo(0,0);
             console.log('screenshot-page-over');
         }else if(val < document.body.scrollHeight){
@@ -365,7 +364,7 @@ class BrowserPage(QWebEnginePage):
             setTimeout(scroll_to_document, 200, val+document.body.clientHeight);
         }else{
             setTimeout(scroll_to_document, 200, 0);
-            window.location.href = window.location.href;
+            //window.location.href = window.location.href;
         }
     }
     setTimeout(scroll_to_document, 200, document.body.clientHeight);
