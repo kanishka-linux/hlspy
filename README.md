@@ -55,7 +55,7 @@ A simple headless browser based on QtWebEngine (Chromium) as backend. Main objec
 		
 		--tmp-dir=TMP_DIR (If not mentioned, default TMP_DIR will be ~/.config/hlspy/)
 		
-		--user-agent=USER_AGENT
+		--user-agent=USER_AGENT_STRING
 		
 		--wait-for-cookie (Do not quit till desired cookie_id obtained)
 		
@@ -79,7 +79,8 @@ A simple headless browser based on QtWebEngine (Chromium) as backend. Main objec
 		
 		--show-window=min (minimize browser window)
 		
-		--grab-window=name.png (image of window will be saved as name.png in current directory)
+		--grab-window=name.png (full-page screenshot of window will be saved as name.png in current directory.
+		                        It should be used with --show-window option)
 		
 		--print-pdf=name.pdf (generate pdf of webpage and save it as name.pdf in current directory)
 		
