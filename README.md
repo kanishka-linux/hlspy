@@ -148,3 +148,9 @@ Sample code is located in ![sample](/sample/sample_async.py) directory. Users ca
 7. In most of the gnu/linux systems, PyQt5 available in official repositories is old and some of them do not package qtwebengine which is based on chromium browser. Therefore it is advisable to use pip to install PyQt5 which always contains latest updated version. 
 
 8. If official repository of gnu/linux system contains latest PyQt5 with qtwebengine, then user should install PyQt5 from official repository instead of using pip. After that user should remove or comment out `install_requires` field in the setup.py before proceeding installation.
+
+9. To use `hlspy` in a complete headless mode set `QT_QPA_VARIABLE` to `offscreen`
+
+    ```
+    $ export QT_QPA_PLATFORM=offscreen
+    ```
