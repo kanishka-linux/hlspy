@@ -19,12 +19,20 @@ along with hlspy.  If not, see <http://www.gnu.org/licenses/>.
 
 
 from setuptools import setup
-import os
-import shutil
+import platform
+
+system = platform.system().lower()
+
+# GNU/Linux systems should use their native package manager
+# to install dependencies
+
+install_requires = []
+if system in ["darwin", "nt"]:
+    install_requires = ['PyQt5', 'sip', 'PyQtWebEngine']
 
 setup(
     name='hlspy',
-    version='1.1.2',
+    version='1.1.3',
     license='GPLv3',
     author='kanishka-linux',
     author_email='kanishka.linux@gmail.com',
@@ -32,7 +40,7 @@ setup(
     long_description="README.md",
     packages=['hlspy'],
     include_package_data=True,
-    entry_points={'console_scripts':['hlspy = hlspy.__init__:main']},
-    install_requires=['PyQt5','sip','PyQtWebEngine'],
+    entry_points={'console_scripts': ['hlspy = hlspy.__init__:main']},
+    install_requires=install_requires,
     description="A simple headless browser based on QtWebEngine",
 )
