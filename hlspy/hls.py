@@ -336,7 +336,7 @@ class BrowserPage(QWebEnginePage):
         else:
             self.document_height = 1.5*int(val)
             print('old-value')
-        self.parent.tab_web.setMinimumHeight(self.document_height)
+        self.parent.tab_web.setMinimumHeight(int(self.document_height))
         self.parent.reload()
         self.taking_screenshot = True
     
