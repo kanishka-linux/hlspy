@@ -389,10 +389,7 @@ class BrowserPage(QWebEnginePage):
         print('Load Finished')
         print(self.parent.tab_web.maximumHeight())
         if self.grab_window:
-            if self.taking_screenshot is False:
-                self.runJavaScript('document.body.scrollHeight', self.val_scr_height)
-            elif self.taking_screenshot:
-                self.runJavaScript(self.js_file_script, self.val_scr_height_scroll)
+            self.runJavaScript(self.js_file_script, self.val_scr_height_scroll)
         
         margins = QtCore.QMarginsF(15, 15, 15, 15)
         layout = QtGui.QPageLayout(QtGui.QPageSize(QtGui.QPageSize.A4),
