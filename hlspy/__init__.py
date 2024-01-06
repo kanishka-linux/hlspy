@@ -206,7 +206,7 @@ NoDisplay=false
         domain_name = domain_name.replace('www.', '', 1)
     print(domain_name)
     if user_agent is None:
-        user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:45.0) Gecko/20100101 Firefox/45.0'
+        user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:115.0) Gecko/20100101 Firefox/115.0'
         
         
     web = BrowseUrlT(url=url, set_cookie=set_cookie, use_cookie=use_cookie, 

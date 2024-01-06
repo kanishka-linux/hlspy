@@ -493,7 +493,7 @@ class BrowseUrlT(QWebEngineView):
         self.tab_web = QtWidgets.QWidget()
         self.tab_web.hide()
         if self.window_dim is None:
-            self.tab_web.setMinimumSize(1024, 768)
+            self.tab_web.setMinimumSize(1920, 1080)
         elif self.window_dim.endswith('xreload'):
             self.window_dim = self.window_dim.replace('xreload', '').lower()
             w, h = self.window_dim.split('x')
